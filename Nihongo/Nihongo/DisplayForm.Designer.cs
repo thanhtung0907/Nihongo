@@ -231,16 +231,18 @@ namespace Nihongo
             // 
             // comboBox_learn
             // 
+            this.comboBox_learn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBox_learn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_learn.FormattingEnabled = true;
             this.comboBox_learn.Location = new System.Drawing.Point(288, 259);
             this.comboBox_learn.Name = "comboBox_learn";
             this.comboBox_learn.Size = new System.Drawing.Size(97, 20);
             this.comboBox_learn.TabIndex = 19;
-            this.comboBox_learn.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBox_learn.SelectedIndexChanged += new System.EventHandler(this.comboBox_learn_SelectedIndexChanged);
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(247, 263);
             this.label3.Name = "label3";
@@ -290,7 +292,6 @@ namespace Nihongo
             this.Name = "DisplayForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "日本語";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DisplayForm_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

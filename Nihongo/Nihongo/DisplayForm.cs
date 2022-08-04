@@ -13,11 +13,9 @@ namespace Nihongo
 {
     public partial class DisplayForm : Form
     {
-        List<Infor> Values_LoadDefault { get; set; }
+        private List<(Infor, int)> Values_LoadDefault { get; set; }
 
-        List<(Infor, int)> Values_Display { get; set; }
-
-        List<(Infor,int)> ValueRandoms { get; set; }
+        private List<(Infor, int)> Values_Display { get; set; }
 
         int CurrentIndex = 0;
 
@@ -76,19 +74,25 @@ namespace Nihongo
 
         bool GetValueRandom()
         {
-            var res = new List<(Infor,int)>();
+            var infor  = GetListInforsToDisplay();
+            if (!infor.Any())
+            {
+                MessageBox.Show("no data");
+                comboBox_learn.SelectedIndex = 0;
+                return false;
+            } 
+            var res = new List<(Infor, int)>();
             while (true)
             {
-                var random_txt = GetRandom(Values_LoadDefault);
+                var random_txt = GetRandom(infor);
                 if (res.Contains(random_txt))
                     continue;
                 res.Add(random_txt);
-                if (res.Count == Values_LoadDefault.Count)
+                if (res.Count == infor.Count)
                     break;
             }
-            ValueRandoms = res;
-            Values_Display = GetListInforsToDisplay();
-            return Values_Display.Any();
+            Values_Display = res.ToList();
+            return true;
         }
 
         void check()
@@ -99,15 +103,17 @@ namespace Nihongo
             button_next.Enabled = bCheck;
             button2.Enabled = bCheck;
             button_reset.Enabled = bCheck;
+            checkBox_have_learned.Enabled = bCheck;
+            button_update.Enabled = bCheck;
         }
 
         static Random random = new Random();
 
-        (Infor,int) GetRandom(List<Infor> infors)
+        (Infor,int) GetRandom(List<(Infor,int)> infors)
         {
             var count = infors.Count;
             var index = random.Next(count);
-            return (infors[index], index);
+            return (infors[index].Item1, infors[index].Item2);
         }
 
         string getDisplayValue(Infor infor)
@@ -122,53 +128,88 @@ namespace Nihongo
 
         Infor infor() => Values_Display[CurrentIndex].Item1;
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            resetTimer();
-            setNum();
-
-            if (!IsChange)
-            {
-                button1.Text = radioButton_kanji.Checked 
-                       ? (string.IsNullOrEmpty(infor().Hiragana) ? infor().Kanji : infor().Hiragana)
-                       : infor().Kanji;
-                IsChange = true;
-            } else {
-                button1.Text = getDisplayValue(infor());
-                IsChange = false;
-            }
-        }
-
         List<(Infor,int)> ValuesLearn(bool haveLearned)
         {
             var res = new List<(Infor, int)>();
-            for (int i = 0; i < ValueRandoms.Count; i++)
+            for (int i = 0; i < Values_LoadDefault.Count; i++)
             {
-                var infor = ValueRandoms[i];
+                var infor = Values_LoadDefault[i];
                 if (haveLearned == infor.Item1.HaveLearned)
-                    res.Add(infor);
+                    res.Add((infor.Item1.Clone(), infor.Item2));
             }
             return res;
         }
         
-        private void button_path_Click(object sender, EventArgs e)
+        bool UpdateValue()
         {
-            resetTimer();
-            var path = PathCommon.getPath();
-            Values_LoadDefault = FileCommon.ReadFile(path);
-            if (Values_LoadDefault is null || !Values_LoadDefault.Any())
-                return;
+            if (!GetValueRandom())
+                return false;
             CurrentIndex = 0;
-            textBox_path.Text = path;
-            if (!GetValueRandom()) 
-                return;
-            
             button1.Text = getDisplayValue(Values_Display.First().Item1);
             checkBox_have_learned.Checked = Values_Display.First().Item1.HaveLearned;
             check();
             setNum();
+            return true;
         }
 
+        void setNum()
+        {
+            label_num.Text = $"{CurrentIndex + 1} / {Values_Display.Count}";
+        }
+
+        private void aTimer_Tick(object sender, EventArgs e)
+        {
+            if (aTimer != null && Values_Display != null)
+            {
+                var (infor, index) = GetRandom(Values_Display);
+                button1.Text = getDisplayValue(infor);
+                checkBox_have_learned.Checked = infor.HaveLearned;
+            }
+        }
+
+        void changeTime()
+        {
+            var time = comboBox_second.Text.ToDouble();
+            if (aTimer != null && time > 0)
+                aTimer.Interval = (int)(time * 1000);
+        }
+
+        List<(Infor, int)> GetListInforsToDisplay()
+        {
+            var txt = comboBox_learn.Text;
+            if (txt == "All"){
+                return Values_LoadDefault.ToList();
+            } else if (txt == "Had") {
+                return ValuesLearn(true);
+            } else {
+                return ValuesLearn(false);
+            }
+        }
+
+        void SetValueDisplay()
+        {
+            button1.Text = getDisplayValue(infor());
+            checkBox_have_learned.Checked = infor().HaveLearned;
+            setNum();
+        }
+
+        void UpdateInfors()
+        {
+            var txt = comboBox_learn.Text;
+            for (int i = 0; i <Values_Display.Count; i++)
+            {
+                var (infor, index) = Values_Display[i];
+                Values_LoadDefault[index] = (infor,index);
+            }
+        }
+
+        void WriteFile()
+        {
+            var strs = Values_LoadDefault.Select(x => x.Item1.GetStringOneLine());
+            FileCommon.WriteFile(textBox_path.Text, strs);
+        }
+
+        //event---------------------------------------
 
         private void button_auto_Click(object sender, EventArgs e)
         {
@@ -183,66 +224,43 @@ namespace Nihongo
             }
         }
 
-        void setNum()
+        private void button1_Click(object sender, EventArgs e)
         {
-            label_num.Text = $"{CurrentIndex + 1} / {Values_Display.Count}";
-        }
-
-        List<Infor> Infors => Values_Display.Select(x => x.Item1).ToList();
-        private void aTimer_Tick(object sender, EventArgs e)
-        {
-            if (aTimer != null && Values_Display != null)
-                button1.Text = getDisplayValue(GetRandom(Infors).Item1);
-        }
-
-        void changeTime()
-        {
-            var time = comboBox_second.Text.ToDouble();
-            if (aTimer != null && time > 0)
-                aTimer.Interval = (int)(time * 1000);
-        }
-
-        List<(Infor, int)> GetListInforsToDisplay()
-        {
-            var txt = comboBox_learn.Text;
-            if (txt == "All")
+            resetTimer();
+            setNum();
+            if (!IsChange)
             {
-                return ValueRandoms;
-            }
-            else if (txt == "Had")
-            {
-                return ValuesLearn(true);
+                IsChange = true;
+                button1.Text = radioButton_kanji.Checked
+                       ? (string.IsNullOrEmpty(infor().Hiragana) ? infor().Kanji : infor().Hiragana)
+                       : infor().Kanji;
             }
             else
             {
-                return ValuesLearn(false);
+                IsChange = false;
+                button1.Text = getDisplayValue(infor());
             }
         }
-
-        void SetValueDisplay()
+        private void button_path_Click(object sender, EventArgs e)
         {
-            button1.Text = getDisplayValue(infor());
-            checkBox_have_learned.Checked = infor().HaveLearned;
-            setNum();
-        }
-
-        void UpdateInfors()
-        {
-            for (int i = 0; i <Values_Display.Count; i++)
+            resetTimer();
+            var path = PathCommon.getPath();
+            var infors = FileCommon.ReadFile(path);
+            if (infors is null)
             {
-                var (infor, index) = Values_Display[i];
-                Values_LoadDefault[index] = infor;
+                return;
             }
+            Values_LoadDefault = new List<(Infor, int)>();
+            for (int i = 0; i < infors.Count; i++)
+            {
+                Values_LoadDefault.Add((infors[i], i));
+            }
+            if (!Values_LoadDefault.Any())
+                return;
+            textBox_path.Text = path;
+            if (!UpdateValue())
+                return;
         }
-
-        void WriteFile()
-        {
-            var strs = Values_LoadDefault.Select(x => x.GetStringOneLine());
-            FileCommon.WriteFile(textBox_path.Text, strs);
-        }
-
-
-        //event---------------------------------------
         private void comboBox_second_SelectedIndexChanged(object sender, EventArgs e)
         {
             changeTime();
@@ -255,6 +273,7 @@ namespace Nihongo
 
         private void button_next_Click(object sender, EventArgs e)
         {
+            IsChange = false;
             resetTimer();
             if (CurrentIndex < Values_Display.Count-1)
                 CurrentIndex++;
@@ -263,6 +282,7 @@ namespace Nihongo
 
         private void button_before_Click(object sender, EventArgs e)
         {
+            IsChange = false;
             resetTimer();
             if (CurrentIndex > 0)
                 CurrentIndex--;
@@ -271,6 +291,7 @@ namespace Nihongo
 
         private void button_reset_Click(object sender, EventArgs e)
         {
+            IsChange = false;
             resetTimer();
             CurrentIndex = 0;
             if (!GetValueRandom())
@@ -280,6 +301,7 @@ namespace Nihongo
 
         private void radioButton_hiragana_CheckedChanged(object sender, EventArgs e)
         {
+            IsChange = false;
             if (Values_Display is null)
                 return;
             button1.Text = getDisplayValue(infor());
@@ -287,6 +309,7 @@ namespace Nihongo
 
         private void radioButton_kanji_CheckedChanged(object sender, EventArgs e)
         {
+            IsChange = false;
             if (Values_Display is null)
                 return;
             button1.Text = getDisplayValue(infor());
@@ -302,18 +325,17 @@ namespace Nihongo
             Values_Display[CurrentIndex].Item1.SetHaveLearned(checkBox_have_learned.Checked);
         }
 
-        private void DisplayForm_FormClosed(object sender, FormClosedEventArgs e)
+        private void comboBox_learn_SelectedIndexChanged(object sender, EventArgs e)
         {
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
+            IsChange = false;
             if (Values_Display is null)
                 return;
+            UpdateValue();
         }
 
         private void button_update_Click(object sender, EventArgs e)
         {
+            IsChange = false;
             UpdateInfors();
             WriteFile();
         }

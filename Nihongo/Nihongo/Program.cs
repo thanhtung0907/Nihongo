@@ -28,6 +28,11 @@ namespace Nihongo
             string learned() => HaveLearned ? "X" : "";
             return $"{ Kanji}, {Hiragana},{VietNamese},{learned()}";
         }
+
+        internal Infor Clone()
+        {
+            return new Infor(this.Kanji, this.Hiragana, this.VietNamese, this.HaveLearned);
+        }
     }
 
     static class Program
