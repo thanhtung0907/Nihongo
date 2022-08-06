@@ -17,7 +17,7 @@ namespace Nihongo
 
         private List<(Infor, int)> Values_Display { get; set; }
 
-        int CurrentIndex = 0;
+        int CurrentIndex { get; set; }
 
         private System.Windows.Forms.Timer aTimer { get; set; }
 
@@ -32,6 +32,7 @@ namespace Nihongo
             {
                 CurrentIndex = 0;
                 aTimer.Stop();
+                aTimer.Dispose();
                 aTimer = null;
             }
         }
@@ -40,6 +41,7 @@ namespace Nihongo
         {
             base.OnLoad(e);
             loadCombobox();
+            CurrentIndex = 0;
             radioButton_kanji.Checked = true;
             check();
             setFontSize();
@@ -157,7 +159,10 @@ namespace Nihongo
 
         void setNum()
         {
-            label_num.Text = $"{CurrentIndex + 1} / {Values_Display.Count}";
+            if(aTimer is null)
+                label_num.Text = $"{CurrentIndex + 1} / {Values_Display.Count}";
+            else
+                label_num.Text = $"{Values_Display.Count}";
         }
 
         private void aTimer_Tick(object sender, EventArgs e)
@@ -167,7 +172,7 @@ namespace Nihongo
                 var (infor, index) = GetRandom(Values_Display);
                 button1.Text = getDisplayValue(infor);
                 checkBox_have_learned.Checked = infor.HaveLearned;
-                CurrentIndex = index;
+                setNum();
             }
         }
 
@@ -220,10 +225,9 @@ namespace Nihongo
             if (time > 0)
             {
                 aTimer = new System.Windows.Forms.Timer();
-                aTimer.Tick += new EventHandler(aTimer_Tick);
                 aTimer.Interval = (int)(time * 1000);
+                aTimer.Tick += new EventHandler(aTimer_Tick);
                 aTimer.Start();
-                label_num.Text = "";
             }
         }
 
@@ -338,10 +342,12 @@ namespace Nihongo
 
         private void button_update_Click(object sender, EventArgs e)
         {
-            resetTimer();
-            IsChange = false;
-            UpdateInfors();
-            WriteFile();
+            if(aTimer is null)
+            {
+                IsChange = false;
+                UpdateInfors();
+                WriteFile();
+            }
         }
 
         private void button_mean2_Click(object sender, EventArgs e)
