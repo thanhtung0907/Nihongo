@@ -30,6 +30,7 @@ namespace Nihongo
         {
             if (aTimer != null)
             {
+                CurrentIndex = 0;
                 aTimer.Stop();
                 aTimer = null;
             }
@@ -52,7 +53,7 @@ namespace Nihongo
             }
             comboBox_second.SelectedIndex = 1;
 
-            var fontSize = new[] {20F, 24F, 28F, 32F, 36F, 48F , 72F, 100F };
+            var fontSize = new[] {32F, 36F, 48F , 72F, 100F };
             foreach (var s in fontSize) {
                 comboBox_fontsize.Items.Add(s);
             }
@@ -105,6 +106,8 @@ namespace Nihongo
             button_reset.Enabled = bCheck;
             checkBox_have_learned.Enabled = bCheck;
             button_update.Enabled = bCheck;
+            button_mean1.Enabled = bCheck;
+            button_mean2.Enabled = bCheck;
         }
 
         static Random random = new Random();
@@ -164,6 +167,7 @@ namespace Nihongo
                 var (infor, index) = GetRandom(Values_Display);
                 button1.Text = getDisplayValue(infor);
                 checkBox_have_learned.Checked = infor.HaveLearned;
+                CurrentIndex = index;
             }
         }
 
@@ -195,7 +199,6 @@ namespace Nihongo
 
         void UpdateInfors()
         {
-            var txt = comboBox_learn.Text;
             for (int i = 0; i <Values_Display.Count; i++)
             {
                 var (infor, index) = Values_Display[i];
@@ -292,8 +295,8 @@ namespace Nihongo
         private void button_reset_Click(object sender, EventArgs e)
         {
             IsChange = false;
-            resetTimer();
             CurrentIndex = 0;
+            resetTimer();
             if (!GetValueRandom())
                 return;
             SetValueDisplay();
@@ -322,7 +325,7 @@ namespace Nihongo
 
         private void checkBox_have_learned_CheckedChanged(object sender, EventArgs e)
         {
-            Values_Display[CurrentIndex].Item1.SetHaveLearned(checkBox_have_learned.Checked);
+            infor().SetHaveLearned(checkBox_have_learned.Checked);
         }
 
         private void comboBox_learn_SelectedIndexChanged(object sender, EventArgs e)
@@ -335,9 +338,20 @@ namespace Nihongo
 
         private void button_update_Click(object sender, EventArgs e)
         {
+            resetTimer();
             IsChange = false;
             UpdateInfors();
             WriteFile();
+        }
+
+        private void button_mean2_Click(object sender, EventArgs e)
+        {
+            button1.Text = infor().VietNamese;
+        }
+
+        private void button_mean1_Click(object sender, EventArgs e)
+        {
+            button1.Text = infor().VietNamese;
         }
     }
 }
