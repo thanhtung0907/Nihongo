@@ -6,19 +6,35 @@ using System.Windows.Forms;
 
 namespace Nihongo
 {
+    public enum Position
+    {
+        Kanji,
+        Hiragana,
+        Mean,
+    }
+
+    public static class PositonExt
+    {
+        public static bool IsKanji(this Position position) => position == Position.Kanji;
+        public static bool IsHiragana(this Position position) => position == Position.Hiragana;
+        public static bool IsMean(this Position position) => position == Position.Mean;
+    }
+
     internal class Infor
     {
         internal string Kanji { get; private set; }
         internal string Hiragana { get; private set; }
         internal string VietNamese { get; private set; }
         internal bool HaveLearned { get; private set; }
+        internal Position Position { get; private set; }
 
-        internal Infor(string kanji, string Hiragana, string vietNamese, bool haveLearned)
+        internal Infor(string kanji, string hiragana, string vietNamese, bool haveLearned, Position position)
         {
             this.Kanji = kanji.Trim();
-            this.Hiragana = Hiragana.Trim();
+            this.Hiragana = hiragana.Trim();
             this.VietNamese = vietNamese.Trim();
             this.HaveLearned = haveLearned;
+            this.Position = position;
         }
 
         internal void SetHaveLearned(bool f) => HaveLearned = f;
@@ -31,7 +47,12 @@ namespace Nihongo
 
         internal Infor Clone()
         {
-            return new Infor(this.Kanji, this.Hiragana, this.VietNamese, this.HaveLearned);
+            return new Infor(this.Kanji, this.Hiragana, this.VietNamese, this.HaveLearned, this.Position);
+        }
+
+        internal void SetPostion(Position position)
+        {
+            this.Position = position;
         }
     }
 

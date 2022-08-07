@@ -34,13 +34,13 @@ namespace Nihongo
             this.button_auto = new System.Windows.Forms.Button();
             this.comboBox_second = new System.Windows.Forms.ComboBox();
             this.button_next = new System.Windows.Forms.Button();
-            this.radioButton_hiragana = new System.Windows.Forms.RadioButton();
+            this.radioButton_kanji = new System.Windows.Forms.RadioButton();
             this.radioButton_mean = new System.Windows.Forms.RadioButton();
             this.button2 = new System.Windows.Forms.Button();
             this.button_reset = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox_path = new System.Windows.Forms.TextBox();
-            this.radioButton_kanji = new System.Windows.Forms.RadioButton();
+            this.radioButton_hiragana = new System.Windows.Forms.RadioButton();
             this.label_num = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBox_fontsize = new System.Windows.Forms.ComboBox();
@@ -111,17 +111,17 @@ namespace Nihongo
             this.button_next.UseVisualStyleBackColor = true;
             this.button_next.Click += new System.EventHandler(this.button_next_Click);
             // 
-            // radioButton_hiragana
+            // radioButton_kanji
             // 
-            this.radioButton_hiragana.AutoSize = true;
-            this.radioButton_hiragana.Location = new System.Drawing.Point(214, 52);
-            this.radioButton_hiragana.Name = "radioButton_hiragana";
-            this.radioButton_hiragana.Size = new System.Drawing.Size(66, 16);
-            this.radioButton_hiragana.TabIndex = 6;
-            this.radioButton_hiragana.TabStop = true;
-            this.radioButton_hiragana.Text = "Hiragara";
-            this.radioButton_hiragana.UseVisualStyleBackColor = true;
-            this.radioButton_hiragana.CheckedChanged += new System.EventHandler(this.radioButton_hiragana_CheckedChanged);
+            this.radioButton_kanji.AutoSize = true;
+            this.radioButton_kanji.Location = new System.Drawing.Point(233, 52);
+            this.radioButton_kanji.Name = "radioButton_kanji";
+            this.radioButton_kanji.Size = new System.Drawing.Size(48, 16);
+            this.radioButton_kanji.TabIndex = 6;
+            this.radioButton_kanji.TabStop = true;
+            this.radioButton_kanji.Text = "Kanji";
+            this.radioButton_kanji.UseVisualStyleBackColor = true;
+            this.radioButton_kanji.CheckedChanged += new System.EventHandler(this.radioButton_hiragana_CheckedChanged);
             // 
             // radioButton_mean
             // 
@@ -177,17 +177,17 @@ namespace Nihongo
             this.textBox_path.Size = new System.Drawing.Size(470, 19);
             this.textBox_path.TabIndex = 2;
             // 
-            // radioButton_kanji
+            // radioButton_hiragana
             // 
-            this.radioButton_kanji.AutoSize = true;
-            this.radioButton_kanji.Location = new System.Drawing.Point(159, 52);
-            this.radioButton_kanji.Name = "radioButton_kanji";
-            this.radioButton_kanji.Size = new System.Drawing.Size(48, 16);
-            this.radioButton_kanji.TabIndex = 5;
-            this.radioButton_kanji.TabStop = true;
-            this.radioButton_kanji.Text = "Kanji";
-            this.radioButton_kanji.UseVisualStyleBackColor = true;
-            this.radioButton_kanji.CheckedChanged += new System.EventHandler(this.radioButton_kanji_CheckedChanged);
+            this.radioButton_hiragana.AutoSize = true;
+            this.radioButton_hiragana.Location = new System.Drawing.Point(159, 52);
+            this.radioButton_hiragana.Name = "radioButton_hiragana";
+            this.radioButton_hiragana.Size = new System.Drawing.Size(68, 16);
+            this.radioButton_hiragana.TabIndex = 5;
+            this.radioButton_hiragana.TabStop = true;
+            this.radioButton_hiragana.Text = "Hiragana";
+            this.radioButton_hiragana.UseVisualStyleBackColor = true;
+            this.radioButton_hiragana.CheckedChanged += new System.EventHandler(this.radioButton_kanji_CheckedChanged);
             // 
             // label_num
             // 
@@ -299,13 +299,13 @@ namespace Nihongo
             this.Controls.Add(this.comboBox_fontsize);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label_num);
-            this.Controls.Add(this.radioButton_kanji);
+            this.Controls.Add(this.radioButton_hiragana);
             this.Controls.Add(this.textBox_path);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button_reset);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.radioButton_mean);
-            this.Controls.Add(this.radioButton_hiragana);
+            this.Controls.Add(this.radioButton_kanji);
             this.Controls.Add(this.button_next);
             this.Controls.Add(this.comboBox_second);
             this.Controls.Add(this.button_auto);
@@ -328,13 +328,13 @@ namespace Nihongo
         private System.Windows.Forms.Button button_auto;
         private System.Windows.Forms.ComboBox comboBox_second;
         private System.Windows.Forms.Button button_next;
-        private System.Windows.Forms.RadioButton radioButton_hiragana;
+        private System.Windows.Forms.RadioButton radioButton_kanji;
         private System.Windows.Forms.RadioButton radioButton_mean;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button_reset;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox_path;
-        private System.Windows.Forms.RadioButton radioButton_kanji;
+        private System.Windows.Forms.RadioButton radioButton_hiragana;
         private System.Windows.Forms.Label label_num;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox comboBox_fontsize;

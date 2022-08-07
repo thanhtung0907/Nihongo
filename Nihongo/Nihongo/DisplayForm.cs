@@ -19,7 +19,7 @@ namespace Nihongo
 
         int CurrentIndex { get; set; }
 
-        private System.Windows.Forms.Timer aTimer { get; set; }
+        private Timer aTimer { get; set; }
 
         public DisplayForm()
         {
@@ -42,7 +42,7 @@ namespace Nihongo
             base.OnLoad(e);
             loadCombobox();
             CurrentIndex = 0;
-            radioButton_kanji.Checked = true;
+            radioButton_hiragana.Checked = true;
             check();
             setFontSize();
         }
@@ -121,17 +121,62 @@ namespace Nihongo
             return (infors[index].Item1, infors[index].Item2);
         }
 
-        string getDisplayValue(Infor infor)
+        Position GetPosition()
         {
-            return radioButton_kanji.Checked ? infor.Kanji :
-                   radioButton_hiragana.Checked
-                   ? (string.IsNullOrEmpty(infor.Hiragana) ? infor.Kanji :  infor.Hiragana) 
-                   : infor.VietNamese;
+            return radioButton_hiragana.Checked ? Position.Kanji :
+                   radioButton_kanji.Checked ? Position.Hiragana : Position.Mean;
+
         }
 
-        bool IsChange = false;
+        void ChangePositon(Infor infor)
+        {
+            if(infor.Position.IsKanji())
+            {
+                infor.SetPostion(radioButton_mean.Checked? Position.Mean : Position.Hiragana);
+            }
+            else if (infor.Position.IsHiragana())
+            {
+                infor.SetPostion(radioButton_mean.Checked ? Position.Mean : Position.Kanji);
+            } 
+            else 
+            {
+                infor.SetPostion(Position.Kanji);
+            }
+        }
 
-        Infor infor() => Values_Display[CurrentIndex].Item1;
+        List<Infor> GetInfors(string path)
+        {
+            if (!File.Exists(path))
+                return null;
+            Infor CreateInfor(string[] strs)
+            {
+                var learned = strs.Count() > 3 && strs[3].Trim().Equals("X");
+                return new Infor(strs[0], strs[1], strs[2], learned, GetPosition());
+            }
+
+            return File.ReadAllLines(path, Encoding.UTF8)
+                .Select(s => s.Split(',')).Where(x => x.Count() > 2)
+                .Select(x => CreateInfor(x))
+                .Where(x => !string.IsNullOrEmpty(x.Kanji))
+                .ToList();
+        }
+
+        Infor CurrentInfor;
+
+        void setDisplayValue(Infor infor)
+        {
+            switch (infor.Position)
+            {
+                case Position.Kanji: 
+                    button1.Text = infor.Kanji; return;
+                case Position.Hiragana:
+                    button1.Text = !string.IsNullOrEmpty(infor.Hiragana) ? infor.Hiragana : infor.Kanji; return;
+                case Position.Mean:
+                    button1.Text = infor.VietNamese; return;
+            }
+        }
+
+        Infor infor() => Values_Display[CurrentIndex].Item1.Clone();
 
         List<(Infor,int)> ValuesLearn(bool haveLearned)
         {
@@ -150,7 +195,8 @@ namespace Nihongo
             if (!GetValueRandom())
                 return false;
             CurrentIndex = 0;
-            button1.Text = getDisplayValue(Values_Display.First().Item1);
+            CurrentInfor = infor();
+            setDisplayValue(Values_Display.First().Item1);
             checkBox_have_learned.Checked = Values_Display.First().Item1.HaveLearned;
             check();
             setNum();
@@ -169,8 +215,9 @@ namespace Nihongo
         {
             if (aTimer != null && Values_Display != null)
             {
-                var (infor, index) = GetRandom(Values_Display);
-                button1.Text = getDisplayValue(infor);
+                var infor = GetRandom(Values_Display).Item1;
+                CurrentInfor = infor;
+                setDisplayValue(infor);
                 checkBox_have_learned.Checked = infor.HaveLearned;
                 setNum();
             }
@@ -197,8 +244,9 @@ namespace Nihongo
 
         void SetValueDisplay()
         {
-            button1.Text = getDisplayValue(infor());
-            checkBox_have_learned.Checked = infor().HaveLearned;
+            CurrentInfor = infor();
+            setDisplayValue(CurrentInfor);
+            checkBox_have_learned.Checked = CurrentInfor.HaveLearned;
             setNum();
         }
 
@@ -221,10 +269,14 @@ namespace Nihongo
 
         private void button_auto_Click(object sender, EventArgs e)
         {
+            if(aTimer != null){
+                return;
+            }
+
             var time = comboBox_second.Text.ToDouble();
             if (time > 0)
             {
-                aTimer = new System.Windows.Forms.Timer();
+                aTimer = new Timer();
                 aTimer.Interval = (int)(time * 1000);
                 aTimer.Tick += new EventHandler(aTimer_Tick);
                 aTimer.Start();
@@ -233,37 +285,25 @@ namespace Nihongo
 
         private void button1_Click(object sender, EventArgs e)
         {
-            resetTimer();
             setNum();
-            if (!IsChange)
-            {
-                IsChange = true;
-                button1.Text = radioButton_kanji.Checked
-                       ? (string.IsNullOrEmpty(infor().Hiragana) ? infor().Kanji : infor().Hiragana)
-                       : infor().Kanji;
-            }
-            else
-            {
-                IsChange = false;
-                button1.Text = getDisplayValue(infor());
-            }
+            ChangePositon(CurrentInfor);
+            setDisplayValue(CurrentInfor);
         }
+
         private void button_path_Click(object sender, EventArgs e)
         {
-            resetTimer();
             var path = PathCommon.getPath();
-            var infors = FileCommon.ReadFile(path);
-            if (infors is null)
-            {
+            var infors = GetInfors(path);
+            if (infors is null) {
                 return;
             }
             Values_LoadDefault = new List<(Infor, int)>();
-            for (int i = 0; i < infors.Count; i++)
-            {
+            for (int i = 0; i < infors.Count; i++) {
                 Values_LoadDefault.Add((infors[i], i));
             }
             if (!Values_LoadDefault.Any())
                 return;
+            resetTimer();
             textBox_path.Text = path;
             if (!UpdateValue())
                 return;
@@ -280,7 +320,6 @@ namespace Nihongo
 
         private void button_next_Click(object sender, EventArgs e)
         {
-            IsChange = false;
             resetTimer();
             if (CurrentIndex < Values_Display.Count-1)
                 CurrentIndex++;
@@ -289,7 +328,6 @@ namespace Nihongo
 
         private void button_before_Click(object sender, EventArgs e)
         {
-            IsChange = false;
             resetTimer();
             if (CurrentIndex > 0)
                 CurrentIndex--;
@@ -298,7 +336,6 @@ namespace Nihongo
 
         private void button_reset_Click(object sender, EventArgs e)
         {
-            IsChange = false;
             CurrentIndex = 0;
             resetTimer();
             if (!GetValueRandom())
@@ -306,20 +343,24 @@ namespace Nihongo
             SetValueDisplay();
         }
 
-        private void radioButton_hiragana_CheckedChanged(object sender, EventArgs e)
+        void changeRadioButton()
         {
-            IsChange = false;
             if (Values_Display is null)
                 return;
-            button1.Text = getDisplayValue(infor());
+            var positon = GetPosition();
+            CurrentInfor.SetPostion(positon);
+            Values_Display.ForEach(x => x.Item1.SetPostion(positon));
+            setDisplayValue(CurrentInfor);
+        }
+
+        private void radioButton_hiragana_CheckedChanged(object sender, EventArgs e)
+        {
+            changeRadioButton();
         }
 
         private void radioButton_kanji_CheckedChanged(object sender, EventArgs e)
         {
-            IsChange = false;
-            if (Values_Display is null)
-                return;
-            button1.Text = getDisplayValue(infor());
+            changeRadioButton();
         }
 
         private void comboBox_fontsize_SelectedIndexChanged(object sender, EventArgs e)
@@ -329,12 +370,11 @@ namespace Nihongo
 
         private void checkBox_have_learned_CheckedChanged(object sender, EventArgs e)
         {
-            infor().SetHaveLearned(checkBox_have_learned.Checked);
+            CurrentInfor.SetHaveLearned(checkBox_have_learned.Checked);
         }
 
         private void comboBox_learn_SelectedIndexChanged(object sender, EventArgs e)
         {
-            IsChange = false;
             if (Values_Display is null)
                 return;
             UpdateValue();
@@ -344,20 +384,32 @@ namespace Nihongo
         {
             if(aTimer is null)
             {
-                IsChange = false;
                 UpdateInfors();
                 WriteFile();
             }
         }
 
+        void SetDisplayClickMean()
+        {
+            if(!CurrentInfor.Position.IsMean()){
+                CurrentInfor.SetPostion(Position.Mean);
+            }
+            else{
+                if(radioButton_hiragana.Checked)
+                    CurrentInfor.SetPostion(Position.Kanji);
+                else if (radioButton_kanji.Checked)
+                    CurrentInfor.SetPostion(Position.Hiragana);
+            }
+            setDisplayValue(CurrentInfor);
+        }
         private void button_mean2_Click(object sender, EventArgs e)
         {
-            button1.Text = infor().VietNamese;
+            SetDisplayClickMean();
         }
 
         private void button_mean1_Click(object sender, EventArgs e)
         {
-            button1.Text = infor().VietNamese;
+            SetDisplayClickMean();
         }
     }
 }
