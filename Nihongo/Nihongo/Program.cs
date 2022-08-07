@@ -28,7 +28,7 @@ namespace Nihongo
         internal bool HaveLearned { get; private set; }
         internal Position Position { get; private set; }
 
-        internal Infor(string kanji, string hiragana, string vietNamese, bool haveLearned, Position position)
+        internal Infor(string hiragana, string kanji, string vietNamese, bool haveLearned, Position position)
         {
             this.Kanji = kanji.Trim();
             this.Hiragana = hiragana.Trim();
@@ -47,7 +47,7 @@ namespace Nihongo
 
         internal Infor Clone()
         {
-            return new Infor(this.Kanji, this.Hiragana, this.VietNamese, this.HaveLearned, this.Position);
+            return new Infor(this.Hiragana, this.Kanji, this.VietNamese, this.HaveLearned, this.Position);
         }
 
         internal void SetPostion(Position position)

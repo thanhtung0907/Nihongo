@@ -20,6 +20,7 @@ namespace Nihongo
         int CurrentIndex { get; set; }
 
         private Timer aTimer { get; set; }
+        Infor CurrentInfor { get; set; }
 
         public DisplayForm()
         {
@@ -42,7 +43,7 @@ namespace Nihongo
             base.OnLoad(e);
             loadCombobox();
             CurrentIndex = 0;
-            radioButton_hiragana.Checked = true;
+            radioButton_kanji.Checked = true;
             check();
             setFontSize();
         }
@@ -95,6 +96,7 @@ namespace Nihongo
                     break;
             }
             Values_Display = res.ToList();
+            Values_Display.ForEach(x => x.Item1.SetPostion(GetPosition()));
             return true;
         }
 
@@ -123,8 +125,8 @@ namespace Nihongo
 
         Position GetPosition()
         {
-            return radioButton_hiragana.Checked ? Position.Kanji :
-                   radioButton_kanji.Checked ? Position.Hiragana : Position.Mean;
+            return radioButton_hiragana.Checked ? Position.Hiragana :
+                   radioButton_kanji.Checked ? Position.Kanji : Position.Mean;
 
         }
 
@@ -161,7 +163,6 @@ namespace Nihongo
                 .ToList();
         }
 
-        Infor CurrentInfor;
 
         void setDisplayValue(Infor infor)
         {
@@ -175,8 +176,6 @@ namespace Nihongo
                     button1.Text = infor.VietNamese; return;
             }
         }
-
-        Infor infor() => Values_Display[CurrentIndex].Item1.Clone();
 
         List<(Infor,int)> ValuesLearn(bool haveLearned)
         {
@@ -195,8 +194,7 @@ namespace Nihongo
             if (!GetValueRandom())
                 return false;
             CurrentIndex = 0;
-            CurrentInfor = infor();
-            setDisplayValue(Values_Display.First().Item1);
+            SetValueDisplay();
             checkBox_have_learned.Checked = Values_Display.First().Item1.HaveLearned;
             check();
             setNum();
@@ -244,7 +242,9 @@ namespace Nihongo
 
         void SetValueDisplay()
         {
-            CurrentInfor = infor();
+            CurrentInfor = Values_Display[CurrentIndex].Item1.Clone();
+            var positon = GetPosition();
+            CurrentInfor.SetPostion(positon);
             setDisplayValue(CurrentInfor);
             checkBox_have_learned.Checked = CurrentInfor.HaveLearned;
             setNum();
@@ -370,7 +370,7 @@ namespace Nihongo
 
         private void checkBox_have_learned_CheckedChanged(object sender, EventArgs e)
         {
-            CurrentInfor.SetHaveLearned(checkBox_have_learned.Checked);
+            Values_Display[CurrentIndex].Item1.SetHaveLearned(checkBox_have_learned.Checked);
         }
 
         private void comboBox_learn_SelectedIndexChanged(object sender, EventArgs e)
@@ -395,9 +395,9 @@ namespace Nihongo
                 CurrentInfor.SetPostion(Position.Mean);
             }
             else{
-                if(radioButton_hiragana.Checked)
+                if(radioButton_kanji.Checked)
                     CurrentInfor.SetPostion(Position.Kanji);
-                else if (radioButton_kanji.Checked)
+                else if (radioButton_hiragana.Checked)
                     CurrentInfor.SetPostion(Position.Hiragana);
             }
             setDisplayValue(CurrentInfor);
