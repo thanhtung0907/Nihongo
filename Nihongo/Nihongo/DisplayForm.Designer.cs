@@ -46,10 +46,10 @@ namespace Nihongo
             this.comboBox_fontsize = new System.Windows.Forms.ComboBox();
             this.checkBox_have_learned = new System.Windows.Forms.CheckBox();
             this.comboBox_learn = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.button_update = new System.Windows.Forms.Button();
             this.button_mean2 = new System.Windows.Forms.Button();
-            this.button_mean1 = new System.Windows.Forms.Button();
+            this.comboBox_change_mode = new System.Windows.Forms.ComboBox();
+            this.button_struct = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -61,7 +61,7 @@ namespace Nihongo
             this.button1.Location = new System.Drawing.Point(92, 78);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(426, 173);
-            this.button1.TabIndex = 11;
+            this.button1.TabIndex = 12;
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -82,7 +82,7 @@ namespace Nihongo
             this.button_auto.Location = new System.Drawing.Point(12, 265);
             this.button_auto.Name = "button_auto";
             this.button_auto.Size = new System.Drawing.Size(74, 23);
-            this.button_auto.TabIndex = 14;
+            this.button_auto.TabIndex = 15;
             this.button_auto.Text = "自動";
             this.button_auto.UseVisualStyleBackColor = true;
             this.button_auto.Click += new System.EventHandler(this.button_auto_Click);
@@ -94,7 +94,7 @@ namespace Nihongo
             this.comboBox_second.Location = new System.Drawing.Point(98, 266);
             this.comboBox_second.Name = "comboBox_second";
             this.comboBox_second.Size = new System.Drawing.Size(46, 20);
-            this.comboBox_second.TabIndex = 15;
+            this.comboBox_second.TabIndex = 16;
             this.comboBox_second.SelectedIndexChanged += new System.EventHandler(this.comboBox_second_SelectedIndexChanged);
             this.comboBox_second.KeyDown += new System.Windows.Forms.KeyEventHandler(this.comboBox_second_KeyDown);
             // 
@@ -106,7 +106,7 @@ namespace Nihongo
             this.button_next.Location = new System.Drawing.Point(524, 78);
             this.button_next.Name = "button_next";
             this.button_next.Size = new System.Drawing.Size(74, 132);
-            this.button_next.TabIndex = 12;
+            this.button_next.TabIndex = 13;
             this.button_next.Text = ">>";
             this.button_next.UseVisualStyleBackColor = true;
             this.button_next.Click += new System.EventHandler(this.button_next_Click);
@@ -114,7 +114,7 @@ namespace Nihongo
             // radioButton_kanji
             // 
             this.radioButton_kanji.AutoSize = true;
-            this.radioButton_kanji.Location = new System.Drawing.Point(233, 52);
+            this.radioButton_kanji.Location = new System.Drawing.Point(246, 52);
             this.radioButton_kanji.Name = "radioButton_kanji";
             this.radioButton_kanji.Size = new System.Drawing.Size(48, 16);
             this.radioButton_kanji.TabIndex = 6;
@@ -126,7 +126,7 @@ namespace Nihongo
             // radioButton_mean
             // 
             this.radioButton_mean.AutoSize = true;
-            this.radioButton_mean.Location = new System.Drawing.Point(288, 52);
+            this.radioButton_mean.Location = new System.Drawing.Point(320, 52);
             this.radioButton_mean.Name = "radioButton_mean";
             this.radioButton_mean.Size = new System.Drawing.Size(50, 16);
             this.radioButton_mean.TabIndex = 7;
@@ -139,10 +139,10 @@ namespace Nihongo
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.button2.Font = new System.Drawing.Font("MS UI Gothic", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button2.Location = new System.Drawing.Point(12, 119);
+            this.button2.Location = new System.Drawing.Point(12, 78);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(74, 132);
-            this.button2.TabIndex = 10;
+            this.button2.Size = new System.Drawing.Size(74, 173);
+            this.button2.TabIndex = 11;
             this.button2.Text = "<<";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button_before_Click);
@@ -153,7 +153,7 @@ namespace Nihongo
             this.button_reset.Location = new System.Drawing.Point(160, 265);
             this.button_reset.Name = "button_reset";
             this.button_reset.Size = new System.Drawing.Size(66, 23);
-            this.button_reset.TabIndex = 16;
+            this.button_reset.TabIndex = 17;
             this.button_reset.Text = "Reset";
             this.button_reset.UseVisualStyleBackColor = true;
             this.button_reset.Click += new System.EventHandler(this.button_reset_Click);
@@ -226,7 +226,7 @@ namespace Nihongo
             this.checkBox_have_learned.Location = new System.Drawing.Point(504, 51);
             this.checkBox_have_learned.Name = "checkBox_have_learned";
             this.checkBox_have_learned.Size = new System.Drawing.Size(94, 16);
-            this.checkBox_have_learned.TabIndex = 8;
+            this.checkBox_have_learned.TabIndex = 9;
             this.checkBox_have_learned.Text = "Have Learned";
             this.checkBox_have_learned.UseVisualStyleBackColor = true;
             this.checkBox_have_learned.CheckedChanged += new System.EventHandler(this.checkBox_have_learned_CheckedChanged);
@@ -236,29 +236,19 @@ namespace Nihongo
             this.comboBox_learn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBox_learn.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_learn.FormattingEnabled = true;
-            this.comboBox_learn.Location = new System.Drawing.Point(288, 266);
+            this.comboBox_learn.Location = new System.Drawing.Point(237, 266);
             this.comboBox_learn.Name = "comboBox_learn";
-            this.comboBox_learn.Size = new System.Drawing.Size(97, 20);
-            this.comboBox_learn.TabIndex = 17;
+            this.comboBox_learn.Size = new System.Drawing.Size(68, 20);
+            this.comboBox_learn.TabIndex = 18;
             this.comboBox_learn.SelectedIndexChanged += new System.EventHandler(this.comboBox_learn_SelectedIndexChanged);
-            // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(247, 270);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(33, 12);
-            this.label3.TabIndex = 20;
-            this.label3.Text = "Learn";
             // 
             // button_update
             // 
             this.button_update.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_update.Location = new System.Drawing.Point(406, 266);
+            this.button_update.Location = new System.Drawing.Point(401, 265);
             this.button_update.Name = "button_update";
             this.button_update.Size = new System.Drawing.Size(66, 23);
-            this.button_update.TabIndex = 18;
+            this.button_update.TabIndex = 19;
             this.button_update.Text = "Update";
             this.button_update.UseVisualStyleBackColor = true;
             this.button_update.Click += new System.EventHandler(this.button_update_Click);
@@ -269,20 +259,32 @@ namespace Nihongo
             this.button_mean2.Location = new System.Drawing.Point(524, 209);
             this.button_mean2.Name = "button_mean2";
             this.button_mean2.Size = new System.Drawing.Size(74, 41);
-            this.button_mean2.TabIndex = 13;
+            this.button_mean2.TabIndex = 14;
             this.button_mean2.Text = "Mean";
             this.button_mean2.UseVisualStyleBackColor = true;
             this.button_mean2.Click += new System.EventHandler(this.button_mean2_Click);
             // 
-            // button_mean1
+            // comboBox_change_mode
             // 
-            this.button_mean1.Location = new System.Drawing.Point(12, 78);
-            this.button_mean1.Name = "button_mean1";
-            this.button_mean1.Size = new System.Drawing.Size(74, 41);
-            this.button_mean1.TabIndex = 9;
-            this.button_mean1.Text = "Mean";
-            this.button_mean1.UseVisualStyleBackColor = true;
-            this.button_mean1.Click += new System.EventHandler(this.button_mean1_Click);
+            this.comboBox_change_mode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBox_change_mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox_change_mode.FormattingEnabled = true;
+            this.comboBox_change_mode.Location = new System.Drawing.Point(311, 266);
+            this.comboBox_change_mode.Name = "comboBox_change_mode";
+            this.comboBox_change_mode.Size = new System.Drawing.Size(84, 20);
+            this.comboBox_change_mode.TabIndex = 22;
+            this.comboBox_change_mode.SelectedIndexChanged += new System.EventHandler(this.comboBox_change_mode_SelectedIndexChanged);
+            // 
+            // button_struct
+            // 
+            this.button_struct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_struct.Location = new System.Drawing.Point(473, 265);
+            this.button_struct.Name = "button_struct";
+            this.button_struct.Size = new System.Drawing.Size(125, 23);
+            this.button_struct.TabIndex = 21;
+            this.button_struct.Text = "Struct";
+            this.button_struct.UseVisualStyleBackColor = true;
+            this.button_struct.Click += new System.EventHandler(this.button_struct_Click);
             // 
             // DisplayForm
             // 
@@ -290,10 +292,10 @@ namespace Nihongo
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.ClientSize = new System.Drawing.Size(610, 300);
-            this.Controls.Add(this.button_mean1);
+            this.Controls.Add(this.comboBox_change_mode);
+            this.Controls.Add(this.button_struct);
             this.Controls.Add(this.button_mean2);
             this.Controls.Add(this.button_update);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.comboBox_learn);
             this.Controls.Add(this.checkBox_have_learned);
             this.Controls.Add(this.comboBox_fontsize);
@@ -340,9 +342,9 @@ namespace Nihongo
         private System.Windows.Forms.ComboBox comboBox_fontsize;
         private System.Windows.Forms.CheckBox checkBox_have_learned;
         private System.Windows.Forms.ComboBox comboBox_learn;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button_update;
         private System.Windows.Forms.Button button_mean2;
-        private System.Windows.Forms.Button button_mean1;
+        private System.Windows.Forms.ComboBox comboBox_change_mode;
+        private System.Windows.Forms.Button button_struct;
     }
 }
